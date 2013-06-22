@@ -1,7 +1,5 @@
 #include <avr/pgmspace.h>
 
-#include "common.h"
-
 const PROGMEM char usbHidReportDescriptor[42] = {
     0x05, 0x01,                    // USAGE_PAGE (Generic Desktop)
     0x09, 0x05,                    // USAGE (Game Pad)

@@ -82,62 +82,10 @@ int main() {
 
     sei(); // Enable interrupts after re-enumeration
 
-    sbi(NES_DDR, CLK);
-    cbi(NES_DDR, OUT);
-    sbi(NES_DDR, LATCH);
-
-    cbi(NES_PORT, CLK);
-    cbi(NES_PORT, LATCH);
-
     while(1) {
         wdt_reset(); // keep the watchdog happy
         usbPoll();
         if (usbInterruptIsReady()) {
-            report_buffer.data = 0x05; // Center pad, little endian
-
-            sbi(NES_PORT, LATCH);
-            _delay_us(1); // Latch pulse width >= 500ns
-            cbi(NES_PORT, LATCH);
-            _delay_us(1); // Propagation time <= 1000ns
-
-            if(bit_is_clear(NES_PIN, OUT))
-                report_buffer.A = 1;
-
-            STROBE_CLK();
-
-            if(bit_is_clear(NES_PIN, OUT))
-                report_buffer.B = 1;
-
-            STROBE_CLK();
-
-            if(bit_is_clear(NES_PIN, OUT))
-                report_buffer.SELECT = 1;
-
-            STROBE_CLK();
-
-            if(bit_is_clear(NES_PIN, OUT))
-                report_buffer.START = 1;
-
-            STROBE_CLK();
-
-            if(bit_is_clear(NES_PIN, OUT))
-                report_buffer.Y--;
-
-            STROBE_CLK();
-
-            if(bit_is_clear(NES_PIN, OUT))
-                report_buffer.Y++;
-
-            STROBE_CLK();
-
-            if(bit_is_clear(NES_PIN, OUT))
-                report_buffer.X--;
-
-            STROBE_CLK();
-
-            if(bit_is_clear(NES_PIN, OUT))
-                report_buffer.X++;
-
             //called after every poll of the interrupt endpoint
             usbSetInterrupt((uchar *) &report_buffer, sizeof(report_buffer));
         }
