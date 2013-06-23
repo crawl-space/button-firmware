@@ -82,10 +82,17 @@ int main() {
 
     sei(); // Enable interrupts after re-enumeration
 
+    PORTB |= _BV(PB3);
+
     while(1) {
         wdt_reset(); // keep the watchdog happy
         usbPoll();
         if (usbInterruptIsReady()) {
+            report_buffer.data = 0x05;
+
+            if (bit_is_clear(PINB, PB3)) {
+                report_buffer.A = 1;
+            }
             //called after every poll of the interrupt endpoint
             usbSetInterrupt((uchar *) &report_buffer, sizeof(report_buffer));
         }
